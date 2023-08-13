@@ -19,29 +19,37 @@ function AttributeEditor() {
   const remainingPoints =
     TOTAL_POINTS - Object.values(attributes).reduce((a, b) => a + b, 0);
 
-  const adjustAttributes = (changedAttribute) => {
-    let totalUsed = Object.values(attributes).reduce((a, b) => a + b, 0);
+  const handleSliderChange = (attribute, value) => {
+    setAttributes((prev) => {
+      const newAttributes = { ...prev, [attribute]: value };
+      let totalUsed = Object.values(newAttributes).reduce((a, b) => a + b, 0);
 
-    if (totalUsed > TOTAL_POINTS) {
-      let excess = totalUsed - TOTAL_POINTS;
-      let attributesToAdjust = Object.keys(attributes).filter(
-        (key) => key !== changedAttribute
-      );
+      if (totalUsed > TOTAL_POINTS) {
+        let excess = totalUsed - TOTAL_POINTS;
+        let attributesToAdjust = Object.keys(newAttributes).filter(
+          (key) => key !== attribute
+        );
 
-      while (excess > 0) {
-        for (let key of attributesToAdjust) {
-          if (attributes[key] > 0 && excess > 0) {
-            setAttributes((prev) => ({ ...prev, [key]: prev[key] - 1 }));
-            excess -= 1;
+        while (excess > 0) {
+          for (let key of attributesToAdjust) {
+            if (newAttributes[key] > 0 && excess > 0) {
+              newAttributes[key] -= 1;
+              excess -= 1;
+            }
           }
         }
       }
-    }
-  };
 
-  const handleSliderChange = (attribute, value) => {
-    setAttributes((prev) => ({ ...prev, [attribute]: value }));
-    adjustAttributes(attribute);
+      window.dispatchEvent(
+        new CustomEvent("heroAttributesChange", {
+          detail: newAttributes,
+          bubbles: true,
+          composed: true,
+        })
+      );
+
+      return newAttributes;
+    });
   };
 
   return (
