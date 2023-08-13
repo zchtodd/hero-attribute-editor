@@ -1,0 +1,14 @@
+.attribute {
+  margin: 65px 0;
+}
+
+.attribute label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.total {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+}
